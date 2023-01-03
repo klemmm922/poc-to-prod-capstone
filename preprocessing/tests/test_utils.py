@@ -114,17 +114,18 @@ class TestLocalTextCategorizationDataset(unittest.TestCase):
         #_dataset = pd.DataFrame(pd.random(100, 5), columns=['post_id', 'tag_name', 'tag_id', 'tag_position', 'title'])
 
         pd.read_csv = MagicMock(return_value=pd.DataFrame({
-            'post_id': ['id_1', 'id_2'],
-            'tag_name': ['tag_a', 'tag_b'],
-            'tag_id': [1, 2],
-            'tag_position': [0, 1],
-            'title': ['title_1', 'title_2']
+            'post_id': ['id_1', 'id_2', 'id_3','id_4', 'id_5', 'id_6'],
+            'tag_name': ['tag_a', 'tag_b', 'tag_c', 'tag_a', 'tag_b', 'tag_c'],
+            'tag_id': [1, 2, 3, 1, 2, 3],
+            'tag_position': [0, 0, 0, 0, 0, 0],
+            'title': ['title_1', 'title_2', 'title_3','title_4', 'title_5', 'title_6']
         }))
-
-        base = utils.LocalTextCategorizationDataset(20, 0.8)
-        base._get_num_samples = MagicMock(return_value=2)
-
-        self.assertEqual(base._get_num_samples(), 2)
+        # we instantiate a LocalTextCategorizationDataset (it'll use the mocked read_csv), and we load dataset
+        dataset = utils.LocalTextCategorizationDataset("fake_path", batch_size=1, train_ratio=0.6,
+                                                       min_samples_per_label=2)
+        expected = 6
+        print(dataset._get_num_samples())
+        self.assertEqual(dataset._get_num_samples(), expected)
 
 
 
@@ -133,16 +134,54 @@ class TestLocalTextCategorizationDataset(unittest.TestCase):
         """
         Here we are testing the function _get_train_batch
         """
-        
+        pd.read_csv = MagicMock(return_value=pd.DataFrame({
+            'post_id': ['id_1', 'id_2', 'id_3','id_4', 'id_5', 'id_6'],
+            'tag_name': ['tag_a', 'tag_b', 'tag_c', 'tag_a', 'tag_b', 'tag_c'],
+            'tag_id': [1, 2, 3, 1, 2, 3],
+            'tag_position': [0, 0, 0, 0, 0, 0],
+            'title': ['title_1', 'title_2', 'title_3','title_4', 'title_5', 'title_6']
+        }))
+        # we instantiate a LocalTextCategorizationDataset (it'll use the mocked read_csv), and we load dataset
+        dataset = utils.LocalTextCategorizationDataset("fake_path", batch_size=1, train_ratio=0.5,
+                                                       min_samples_per_label=1)
+
+        x, y = dataset._get_train_batch()
+        print(y.shape)
+        self.assertTupleEqual(x.shape, (1,)) and self.assertTupleEqual(y.shape, (1, 5))
+
 
     def test_get_test_batch_returns_expected_shape(self):
         # TODO: CODE HERE
         """
         Here we are testing the function _get_test_batch_returns_expected_shape
         """
+        pd.read_csv = MagicMock(return_value=pd.DataFrame({
+            'post_id': ['id_1', 'id_2', 'id_3','id_4', 'id_5', 'id_6'],
+            'tag_name': ['tag_a', 'tag_b', 'tag_c', 'tag_a', 'tag_b', 'tag_c'],
+            'tag_id': [1, 2, 3, 1, 2, 3],
+            'tag_position': [0, 0, 0, 0, 0, 0],
+            'title': ['title_1', 'title_2', 'title_3','title_4', 'title_5', 'title_6']
+        }))
+        # we instantiate a LocalTextCategorizationDataset (it'll use the mocked read_csv), and we load dataset
+        dataset = utils.LocalTextCategorizationDataset("fake_path", batch_size=1, train_ratio=0.5,
+                                                       min_samples_per_label=1)
+
+        x, y = dataset._get_test_batch()
+        print(y.shape)
+        self.assertTupleEqual(x.shape, (1,)) and self.assertTupleEqual(y.shape, (1, 5))
+
 
     def test_get_train_batch_raises_assertion_error(self):
         # TODO: CODE HERE
         """
         Here we are testing the function _get_train_batch_raises_assertion_error
         """
+        pd.read_csv = MagicMock(return_value=pd.DataFrame({
+            'post_id': ['id_1', 'id_2'],
+            'tag_name': ['tag_a', 'tag_a'],
+            'tag_id': [1, 2],
+            'tag_position': [0, 0],
+            'title': ['title_1', 'title_2']
+        }))
+        with self.assertRaises(AssertionError):
+            utils.LocalTextCategorizationDataset("fake_path", batch_size=3, train_ratio=0.5, min_samples_per_label=1)

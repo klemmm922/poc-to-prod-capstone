@@ -40,7 +40,7 @@ class TestTrain(unittest.TestCase):
         # create a dictionary params for train conf
         # I kept these params from the file train-conf.yaml, so must be verified ????????????
         params = {
-            "batch_size": 32,
+            "batch_size": 2,
             "epochs": 1,
             "dense_dim": 64,
             "min_samples_per_label": 10,

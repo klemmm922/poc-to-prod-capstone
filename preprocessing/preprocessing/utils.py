@@ -226,8 +226,8 @@ class LocalTextCategorizationDataset(BaseTextCategorizationDataset):
         """
         returns label list
         """
-        return self._label_list    #the label list was init in the constructor of the class LocalTextCategorizationDataset
-
+        #return self._label_list    #the label list was init in the constructor of the class LocalTextCategorizationDataset
+        return self._dataset['tag_name'].unique()  #we could also return the unique values of the column tag_name
 
     def _get_num_samples(self):
         """
