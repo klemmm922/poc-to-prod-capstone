@@ -235,7 +235,7 @@ class LocalTextCategorizationDataset(BaseTextCategorizationDataset):
         """
         return self._dataset.shape[0]   #  we used shape[0] to get the number of rows
 
-    def _get_train_batch(self):
+    def get_train_batch(self):
         i = self.train_batch_index
         
         # takes x_train between i * batch_size to (i + 1) * batch_size, and apply preprocess_text
@@ -247,7 +247,7 @@ class LocalTextCategorizationDataset(BaseTextCategorizationDataset):
         self.train_batch_index = (self.train_batch_index + 1) % self._get_num_train_batches()
         return next_x, next_y
 
-    def _get_test_batch(self):
+    def get_test_batch(self):
         """
         it does the same as get_train_batch for the test set
         """

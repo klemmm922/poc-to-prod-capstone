@@ -52,6 +52,7 @@ def train(dataset_path, train_conf, model_path, add_timestamp):
 
     # TODO: CODE HERE
     # model fit using data sequences
+    model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
     train_history =  model.fit(dataset.get_train_sequence(), epochs=train_conf['epochs'], verbose=train_conf['verbose'])
 
     # scores
@@ -75,7 +76,7 @@ def train(dataset_path, train_conf, model_path, add_timestamp):
     # TODO: CODE HERE
     # save labels index in artefacts_path/labels_index.json
     with open(os.path.join(artefacts_path, 'labels_index.json'), 'w') as f:  #w for write
-        json.dump(dataset.get_labels_index(), f)    #dump the labels index in the file f
+        json.dump(dataset.get_index_to_label_map(), f)    #dump the labels index in the file f
 
     # train_history.history is not JSON-serializable because it contains numpy arrays
     serializable_hist = {k: [float(e) for e in v] for k, v in train_history.history.items()}

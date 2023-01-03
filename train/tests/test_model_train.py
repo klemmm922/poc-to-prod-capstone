@@ -43,14 +43,15 @@ class TestTrain(unittest.TestCase):
             "batch_size": 2,
             "epochs": 1,
             "dense_dim": 64,
-            "min_samples_per_label": 10,
+            "min_samples_per_label": 4,
             "verbose": 1
         }
 
         # we create a temporary file to store artefacts
         with tempfile.TemporaryDirectory() as model_dir:
             # run a training
-            accuracy, _ = run(params, model_dir)
+            #accuracy, _ = run(params, model_dir)
+            accuracy, _ = run.train("fake_path", params, model_dir,False)
 
         # TODO: CODE HERE
         # assert that accuracy is equal to 1.0
