@@ -6,6 +6,8 @@ import unittest
 from unittest.mock import MagicMock
 import tempfile
 
+from predict.predict.run import TextPredictionModel
+
 import pandas as pd
 
 def load_dataset_mock():
@@ -29,13 +31,12 @@ def load_dataset_mock():
         'tag_name': tags
     })
 
-class TextPredictionModel(unittest.TestCase):
+class TestPred(unittest.TestCase):
 
     utils.LocalTextCategorizationDataset.load_dataset = MagicMock(return_value=load_dataset_mock())
-    dataset = utils.LocalTextCategorizationDataset.load_dataset
-
 
     def test_predict(self):
+
         params = {
             "batch_size": 2,
             "epochs": 1,
@@ -44,8 +45,9 @@ class TextPredictionModel(unittest.TestCase):
             "verbose": 1
         }
 
-        with tempfile.TemporaryDirectory() as model_dir:
-            accuracy, _ = train_run.train("fake_path", params, model_dir,False)
-            #accuracy, _ = train_run(params, model_dir)
+        text_list = ["Is it possible to execute the procedure of a function in the scope of the caller?"]
+    
+        model = TextPredictionModel.from_artefacts("train/data/artefacts/")
+        predictions = model.predict(text_list,top_k=1)
 
-        self.assertEqual(accuracy, 1.0)
+        self.assertEqual(predictions, [['php']])

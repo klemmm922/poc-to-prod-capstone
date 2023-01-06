@@ -4,6 +4,7 @@ import os
 import time
 from collections import OrderedDict
 
+import tensorflow as tf
 from tensorflow.keras.models import load_model
 from numpy import argsort
 
@@ -56,15 +57,19 @@ class TextPredictionModel:
 
         # TODO: CODE HERE
         # embed text_list
-        embeddings = embed(text_list, self.params["embeddings"])
+        embeddings = embed(text_list)
 
         # TODO: CODE HERE
         # predict tags indexes from embeddings
-        predictions = self.model.predict(embeddings)
+        tag_predictions = self.model.predict(embeddings)
 
         # TODO: CODE HERE
         # from tags indexes compute top_k tags for each text
-        predictions = [argsort(pred)[-top_k:] for pred in predictions]
+        tags_indexes = argsort(tag_predictions)
+        top_tags_indexes = tags_indexes[0][-top_k:]
+
+            
+        predictions = [self.labels_index_inv[index] for index in top_tags_indexes]
 
         logger.info("Prediction done in {:2f}s".format(time.time() - tic))
 
